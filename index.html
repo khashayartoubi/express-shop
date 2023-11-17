@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Page Title</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link
+            rel="stylesheet"
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+            crossorigin="anonymous"
+        />
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <form action="#" id="form">
+                    <div class="form-group">
+                        <label>تصویر مقاله : </label>
+                        <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            class="form-control"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-danger">ارسال</button>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById('form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                let data = {
+                    query: `
+                    mutation addMultimedia($image : Upload!){
+                        multimedia(image : $image) {
+                                status
+                            }
+                        }
+                    `,
+                    variables: {
+                        image: null
+                    },
+                };
+
+                let map = {
+                    0: ['variables.image'],
+                };
+
+                let file = document.getElementById('image').files[0];
+                let formD = new FormData();
+                formD.append('operation', JSON.stringify(data));
+                formD.append('map', JSON.stringify(map));
+                formD.append(0, file, file.name);
+
+                let optitons = {
+                    method: 'POST',
+                    headers: {
+                        token: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1NGE4OGIzYjQ0YzVmNDc5MWYwYTA3NCIsImlhdCI6MTY5OTgxNjIwNiwiZXhwIjoxNjk5ODUyMjA2fQ.ftN34H-7yPQ6PEtZXef9RO8Lpmqvs5AYOUKjIq5MCTE`,
+                        'Content-Type': 'application/json',
+                    },
+
+                    body: JSON.stringify({ data: formD }),
+                };
+
+                let url = 'http://localhost:3302/graphql';
+
+                fetch(url, optitons)
+                    .then((res) => res.json())
+                    .then((res) => console.log(res))
+                    .catch((err) => console.log(err));
+            });
+        </script>
+    </body>
+</html>
